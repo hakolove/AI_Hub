@@ -1,0 +1,28 @@
+{
+  "services": [
+    {
+      "name": "SoraWatermarkRemover",
+      "port": 7860,
+      "url": "http://192.168.252.126:7860",
+      "start_script": "D:\\AIHub\\scripts\\start_sora.bat"
+    },
+    {
+      "name": "iMerl Network",
+      "port": 8003,
+      "url": "http://192.168.252.126:8003",
+      "start_script": "D:\\AIHub\\scripts\\start_imerl.bat"
+    },
+    {
+      "name": "Abogen",
+      "port": 8808,
+      "url": "http://192.168.252.126:8808",
+      "start_script": "D:\\AIHub\\scripts\\start_abogen.bat"
+    },
+    {
+      "name": "JP Subtitle Generator",
+      "port": 7861,
+      "url": "http://192.168.252.126:7861",
+      "start_script": "D:\\AIHub\\scripts\\start_jp_subtitle.bat"
+    }
+  ]
+}

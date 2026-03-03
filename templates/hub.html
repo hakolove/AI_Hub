@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>AI HUB</title>
+
+<style>
+body {
+    background:#0f172a;
+    font-family:Segoe UI;
+    color:white;
+    margin:0;
+    padding-bottom:280px;
+}
+
+.header {
+    font-size:28px;
+    padding:24px;
+    font-weight:600;
+}
+
+.container {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.card {
+    background:#1e293b;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.3);
+}
+
+.title {
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.dot {
+    width:12px;
+    height:12px;
+    border-radius:50%;
+}
+
+.status {
+    margin:10px 0;
+    color:#94a3b8;
+}
+
+.btn-group {
+    display:flex;
+    gap:8px;
+}
+
+.btn {
+    padding:8px 14px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:14px;
+    cursor:pointer;
+    border:none;
+}
+
+.start {
+    background:#2563eb;
+    color:white;
+}
+
+.start:hover {
+    background:#1d4ed8;
+}
+
+.start:disabled, .start.starting {
+    background:#4b5563;
+    cursor:not-allowed;
+    opacity:0.7;
+}
+
+.open {
+    background:#22c55e;
+    color:black;
+}
+
+.stop {
+    background:#dc2626;
+    color:white;
+}
+
+.stop:hover {
+    background:#b91c1c;
+}
+
+.info {
+    background:#64748b;
+    color:white;
+}
+
+.info:hover {
+    background:#475569;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+}
+
+.modal-overlay.active {
+    display:flex;
+}
+
+.modal {
+    background:#1e293b;
+    border-radius:12px;
+    padding:24px;
+    max-width:500px;
+    width:90%;
+    max-height:80vh;
+    overflow-y:auto;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.modal-title {
+    font-size:20px;
+    font-weight:600;
+}
+
+.modal-close {
+    background:none;
+    border:none;
+    color:#94a3b8;
+    font-size:24px;
+    cursor:pointer;
+    padding:0;
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:4px;
+}
+
+.modal-close:hover {
+    background:#334155;
+    color:white;
+}
+
+.modal-content {
+    color:#cbd5e1;
+    line-height:1.6;
+}
+
+.modal-content p {
+    margin:0 0 12px 0;
+}
+
+/* Log Panel Styles */
+.log-panel {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:250px;
+    background:#0d1117;
+    border-top:1px solid #30363d;
+    display:flex;
+    flex-direction:column;
+    font-family:'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size:12px;
+    z-index:100;
+}
+
+.log-panel.minimized {
+    height:40px;
+}
+
+.log-panel.minimized .log-content {
+    display:none;
+}
+
+.log-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 16px;
+    background:#161b22;
+    border-bottom:1px solid #30363d;
+    flex-shrink:0;
+}
+
+.log-tabs {
+    display:flex;
+    gap:4px;
+}
+
+.log-tab {
+    padding:6px 16px;
+    background:#21262d;
+    color:#8b949e;
+    border:none;
+    border-radius:4px 4px 0 0;
+    cursor:pointer;
+    font-size:12px;
+    font-family:inherit;
+}
+
+.log-tab:hover {
+    background:#30363d;
+}
+
+.log-tab.active {
+    background:#0d1117;
+    color:#c9d1d9;
+    border:1px solid #30363d;
+    border-bottom:none;
+}
+
+.log-tab .indicator {
+    display:inline-block;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    margin-right:6px;
+    background:#238636;
+}
+
+.log-controls {
+    display:flex;
+    gap:8px;
+}
+
+.log-refresh, .log-toggle {
+    width:28px;
+    height:28px;
+    border:none;
+    background:#21262d;
+    color:#c9d1d9;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.log-refresh:hover, .log-toggle:hover {
+    background:#30363d;
+}
+
+.log-content {
+    flex:1;
+    overflow-y:auto;
+    padding:12px 16px;
+    color:#c9d1d9;
+    line-height:1.5;
+    white-space:pre-wrap;
+    word-break:break-all;
+}
+
+.log-placeholder {
+    color:#8b949e;
+    text-align:center;
+    padding-top:80px;
+}
+
+.log-line {
+    display:block;
+}
+
+.log-error {
+    color:#f85149;
+}
+
+.log-warn {
+    color:#f0883e;
+}
+
+.log-info {
+    color:#58a6ff;
+}
+
+.log-content::-webkit-scrollbar {
+    width:10px;
+}
+
+.log-content::-webkit-scrollbar-track {
+    background:#0d1117;
+}
+
+.log-content::-webkit-scrollbar-thumb {
+    background:#30363d;
+    border-radius:5px;
+}
+
+.log-content::-webkit-scrollbar-thumb:hover {
+    background:#484f58;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">🚀 AI HUB</div>
+
+<div class="container">
+{% for s in services %}
+    <div class="card">
+        <div class="title">
+            <span class="dot" style="background:{{ '#22c55e' if s.running else '#ef4444' }}"></span>
+            {{ s.name }}
+        </div>
+        <div class="status">{{ '运行中' if s.running else '未启动' }}</div>
+        <div class="btn-group">
+            <button class="btn info" onclick="showInfo('{{ s.name }}')">详情</button>
+            {% if s.running %}
+                <a class="btn open" href="{{ s.url }}" target="_blank">打开</a>
+                <button type="button" class="btn stop" onclick="confirmStop('{{ s.name }}')">停止</button>
+            {% else %}
+                <button class="btn start" data-service="{{ s.name }}" onclick="startService('{{ s.name }}')">启动</button>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<!-- Info Modal -->
+<div id="info-modal" class="modal-overlay" onclick="closeInfoModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <span class="modal-title" id="modal-title">服务详情</span>
+            <button class="modal-close" onclick="closeInfoModal()">×</button>
+        </div>
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+</div>
+
+<!-- Log Panel -->
+<div id="log-panel" class="log-panel">
+    <div class="log-header">
+        <div class="log-tabs" id="log-tabs">
+        </div>
+        <div class="log-controls">
+            <button onclick="refreshLogs()" class="log-refresh" title="刷新">⟳</button>
+            <button onclick="toggleLogPanel()" class="log-toggle" title="最小化">_</button>
+        </div>
+    </div>
+    <div class="log-content" id="log-content">
+        <div class="log-placeholder">启动服务后可查看日志</div>
+    </div>
+</div>
+
+<script>
+let currentService = null;
+const runningServices = {{ running_services | tojson }};
+
+function initLogPanel() {
+    const tabsContainer = document.getElementById('log-tabs');
+
+    if (runningServices.length === 0) {
+        tabsContainer.innerHTML = '<span style="color:#8b949e;font-size:12px;">没有运行中的服务</span>';
+        document.getElementById('log-content').innerHTML = '<div class="log-placeholder">启动服务后可查看日志</div>';
+        return;
+    }
+
+    tabsContainer.innerHTML = runningServices.map((name, i) => `
+        <button class="log-tab ${i === 0 ? 'active' : ''}"
+                data-service="${name}"
+                onclick="switchTab('${name}')">
+            <span class="indicator"></span>${name}
+        </button>
+    `).join('');
+
+    if (runningServices.length > 0 && !currentService) {
+        switchTab(runningServices[0]);
+    }
+}
+
+async function switchTab(serviceName) {
+    currentService = serviceName;
+
+    document.querySelectorAll('.log-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.service === serviceName);
+    });
+
+    await loadLogs(serviceName);
+}
+
+async function loadLogs(serviceName) {
+    const contentEl = document.getElementById('log-content');
+    contentEl.innerHTML = '<div class="log-placeholder">加载中...</div>';
+
+    try {
+        const response = await fetch(`/logs?name=${encodeURIComponent(serviceName)}&lines=100`);
+        const data = await response.json();
+
+        if (!data.exists) {
+            contentEl.innerHTML = '<div class="log-placeholder">暂无日志</div>';
+            return;
+        }
+
+        const lines = data.logs.split('\n');
+        contentEl.innerHTML = lines.map(line => {
+            let className = 'log-line';
+            const lower = line.toLowerCase();
+            if (lower.includes('error') || lower.includes('exception') || lower.includes('失败')) {
+                className += ' log-error';
+            } else if (lower.includes('warn') || lower.includes('警告')) {
+                className += ' log-warn';
+            } else if (lower.includes('info') || lower.includes('started') || lower.includes('success')) {
+                className += ' log-info';
+            }
+            return `<span class="${className}">${escapeHtml(line)}</span>`;
+        }).join('\n');
+
+        contentEl.scrollTop = contentEl.scrollHeight;
+    } catch (e) {
+        contentEl.innerHTML = `<div class="log-placeholder log-error">加载失败: ${e.message}</div>`;
+    }
+}
+
+async function refreshLogs() {
+    if (currentService) {
+        await loadLogs(currentService);
+    }
+}
+
+function toggleLogPanel() {
+    document.getElementById('log-panel').classList.toggle('minimized');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+async function startService(serviceName) {
+    const btn = document.querySelector(`button[data-service="${serviceName}"]`);
+    if (!btn || btn.disabled) return;
+
+    btn.disabled = true;
+    btn.classList.add('starting');
+    btn.textContent = '启动中...';
+
+    try {
+        const response = await fetch(`/start?name=${encodeURIComponent(serviceName)}`);
+        const data = await response.json();
+
+        if (data.status === 'already_running') {
+            alert('服务已经在运行中');
+            location.reload();
+            return;
+        }
+
+        if (data.status === 'not_found') {
+            alert('服务未找到');
+            btn.disabled = false;
+            btn.classList.remove('starting');
+            btn.textContent = '启动';
+            return;
+        }
+
+        let attempts = 0;
+        const maxAttempts = 30;
+
+        const checkInterval = setInterval(async () => {
+            attempts++;
+            try {
+                const checkResp = await fetch(`/check?name=${encodeURIComponent(serviceName)}`);
+                const checkData = await checkResp.json();
+
+                if (checkData.running) {
+                    clearInterval(checkInterval);
+                    location.reload();
+                    return;
+                }
+
+                if (attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    if (confirm('服务启动时间较长，可能启动失败。\n是否继续等待？')) {
+                        attempts = 0;
+                    } else {
+                        btn.disabled = false;
+                        btn.classList.remove('starting');
+                        btn.textContent = '启动';
+                    }
+                }
+            } catch (e) {
+                console.error('检查状态失败:', e);
+            }
+        }, 4000);
+
+    } catch (e) {
+        alert('启动失败: ' + e.message);
+        btn.disabled = false;
+        btn.classList.remove('starting');
+        btn.textContent = '启动';
+    }
+}
+
+function confirmStop(serviceName) {
+    console.log('confirmStop called for:', serviceName);
+    if (confirm('确定要停止服务 "' + serviceName + '" 吗？')) {
+        console.log('User confirmed, sending request...');
+        fetch('/stop?name=' + encodeURIComponent(serviceName))
+            .then(r => {
+                console.log('Response status:', r.status);
+                if (!r.ok) {
+                    throw new Error('HTTP ' + r.status + ': ' + r.statusText);
+                }
+                return r.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    alert('停止成功: ' + (data.msg || '服务已停止'));
+                    location.reload();
+                } else {
+                    alert('停止失败: ' + (data.msg || '未知错误'));
+                }
+            })
+            .catch(e => {
+                console.error('Stop failed:', e);
+                alert('请求失败: ' + e.message);
+            });
+    }
+    return false;
+}
+
+// 服务说明数据
+const serviceInfo = {
+    'SoraWatermarkRemover': {
+        title: 'Sora Watermark Remover',
+        content: `
+            <p><strong>功能：</strong>专业的视频水印去除工具，可清除 Sora 生成视频中的水印。</p>
+            <p><strong>使用方法：</strong>上传带水印的视频文件，工具会自动识别并去除水印，输出干净的无水印视频。</p>
+            <p><strong>适用场景：</strong>需要清理视频素材用于商业用途、个人创作等场景。</p>
+            <p><strong>技术特点：</strong>采用先进的图像修复算法，在去除水印的同时最大程度保持视频质量。</p>
+        `
+    },
+    'iMerl Network': {
+        title: 'iMerl Network - AI 评论员工作流',
+        content: `
+            <p><strong>功能：</strong>企业级 SaaS 多租户平台，自动监控 RSS 源，智能分析文章内容，利用大模型进行评分，并根据预设人格生成高质量的评论脚本。</p>
+            <p><strong>核心功能：</strong></p>
+            <ul>
+                <li>RSS 监控与解析 - 自动抓取 RSS 源并提取核心文本</li>
+                <li>AI 智能评分 - 基于自定义标准自动评估文章价值</li>
+                <li>脚本自动生成 - 根据设定人格自动生成风格化评论脚本</li>
+                <li>多模态播客生成 - 支持生成双人对谈音频（Host/Guest 模式）</li>
+                <li>SaaS 多租户架构 - 支持多团队部署，数据隔离</li>
+            </ul>
+            <p><strong>适用场景：</strong>内容创作者、新闻聚合平台、自动化媒体运营团队使用。</p>
+        `
+    },
+    'Abogen': {
+        title: 'Abogen',
+        content: `
+            <p><strong>功能：</strong>AI 有声书生成器，可将电子书转换为高质量有声书。</p>
+            <p><strong>使用方法：</strong>上传电子书文件（支持 txt、epub 等格式），选择语音音色和语速，系统自动生成有声书。</p>
+            <p><strong>适用场景：</strong>听书爱好者、视障人士、学习 multitasking 场景。</p>
+            <p><strong>技术特点：</strong>支持多种语言和音色选择，可保存多角色语音配置，生成自然流畅的朗读效果。</p>
+        `
+    },
+    'JP Subtitle Generator': {
+        title: 'JP Subtitle Generator',
+        content: `
+            <p><strong>功能：</strong>日语视频字幕生成器，可为日语视频自动生成中日双语字幕。</p>
+            <p><strong>使用方法：</strong>上传日语视频文件，系统会自动识别语音并生成日语字幕，同时提供中文翻译。</p>
+            <p><strong>适用场景：</strong>日语学习、日本影视作品观看、视频翻译制作等。</p>
+            <p><strong>技术特点：</strong>采用先进的语音识别和机器翻译技术，支持时间轴自动对齐，生成准确的字幕文件。</p>
+        `
+    }
+};
+
+function showInfo(serviceName) {
+    const info = serviceInfo[serviceName];
+    if (!info) {
+        alert('暂无该服务的说明信息');
+        return;
+    }
+    document.getElementById('modal-title').textContent = info.title;
+    document.getElementById('modal-content').innerHTML = info.content;
+    document.getElementById('info-modal').classList.add('active');
+}
+
+function closeInfoModal(event) {
+    if (!event || event.target.id === 'info-modal' || event.target.classList.contains('modal-close')) {
+        document.getElementById('info-modal').classList.remove('active');
+    }
+}
+
+window.onload = initLogPanel;
+</script>
+
+</body>
+</html>

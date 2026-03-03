@@ -1,0 +1,6 @@
+@echo off
+echo [INFO] Starting SoraWatermarkRemover...
+echo [INFO] Working directory: D:\SoraWatermarkCleaner
+cd /d D:\SoraWatermarkCleaner
+echo [INFO] Launching Gradio app on port 7860...
+C:\Users\dell\.local\bin\uv.exe run python gradio_app.py --server-name 0.0.0.0 --server-port 7860
