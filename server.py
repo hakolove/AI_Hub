@@ -41,6 +41,10 @@ def start_service(script_path, service_name):
         env["LOCALAPPDATA"] = os.path.join(userprofile, "AppData", "Local")
         env["HOMEDRIVE"] = userprofile[:2] if len(userprofile) >= 2 else "C:"
         env["HOMEPATH"] = userprofile[2:] if len(userprofile) >= 2 else "\\Users\\dell"
+        # Set PyTorch/HuggingFace cache directories to user profile
+        env["TORCH_HOME"] = os.path.join(userprofile, ".cache", "torch")
+        env["HF_HOME"] = os.path.join(userprofile, ".cache", "huggingface")
+        env["XDG_CACHE_HOME"] = os.path.join(userprofile, ".cache")
 
     # 写入环境变量诊断信息
     with open(log_file, "a", encoding="utf-8") as f:
@@ -49,6 +53,8 @@ def start_service(script_path, service_name):
         f.write(f"[{timestamp}]   APPDATA={env.get('APPDATA', 'NOT SET')}\n")
         f.write(f"[{timestamp}]   LOCALAPPDATA={env.get('LOCALAPPDATA', 'NOT SET')}\n")
         f.write(f"[{timestamp}]   HOME={env.get('HOME', 'NOT SET')}\n")
+        f.write(f"[{timestamp}]   TORCH_HOME={env.get('TORCH_HOME', 'NOT SET')}\n")
+        f.write(f"[{timestamp}]   HF_HOME={env.get('HF_HOME', 'NOT SET')}\n")
         f.flush()
 
     # 启动进程，输出重定向到文件（使用行缓冲）
