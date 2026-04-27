@@ -1,0 +1,6 @@
+@echo off
+echo [INFO] Starting 映画工坊...
+echo [INFO] Working directory: D:\python\JP_Shorts
+cd /d "D:\python\JP_Shorts"
+echo [INFO] Launching server on port 8000...
+"D:\AIHub\.venv\Scripts\python.exe" shorts_suite.py

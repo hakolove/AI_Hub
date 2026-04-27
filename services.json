@@ -19,10 +19,16 @@
       "start_script": "D:\\AIHub\\scripts\\start_abogen.bat"
     },
     {
-      "name": "JP Subtitle Generator",
-      "port": 7861,
-      "url": "http://192.168.252.126:7861",
-      "start_script": "D:\\AIHub\\scripts\\start_jp_subtitle.bat"
+      "name": "映画工坊",
+      "port": 8000,
+      "url": "http://192.168.252.126:8000",
+      "start_script": "D:\\AIHub\\scripts\\start_jp_shorts.bat"
+    },
+    {
+      "name": "Qwen3 ASR字幕转录",
+      "port": 7867,
+      "url": "http://192.168.252.126:7867",
+      "start_script": "D:\\AIHub\\scripts\\start_qwen3_asr.bat"
     }
   ]
 }
